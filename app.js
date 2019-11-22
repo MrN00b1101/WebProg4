@@ -1,20 +1,18 @@
-var db = require('mongoose');
+var express = require('express');
+var bodyParser = require('body-parser');
 
-var uri = "mongodb+srv://user2:qwertz@malacpersely-z58bs.gcp.mongodb.net/webprog?retryWrites=true&w=majority";
-//var uri = "mongodb+srv://admin:iqboPLiuPOG9uiZd@cluster0-pdmxq.mongodb.net/webprog?retryWrites=true&w=majority";
+var app = express();
 
-db.connect(uri, function (err) {
-	//console.log('mongodb connected');
-	console.log(err);
-});
-var Schema = db.Schema;
-var UserSchema = new Schema({
-	name: { type: String, require: true }
-	
-}, { collection: 'users' });
+var weboldalRoutes = require('./routes/siteRoutes');
 
-var Users = db.model('users', UserSchema);
-Users.insertMany({name: 'Roger2'}, (err, result) => {
+app.use(bodyParser.json());
 
-})
-//module.exports = db;
+app.use(express.static('assets'));
+
+app.set('view engine', 'ejs');
+
+app.use('/', weboldalRoutes);
+app.listen(8080);
+
+
+
