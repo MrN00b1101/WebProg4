@@ -5,6 +5,7 @@ var router = express.Router();
 //var ezegymasikmodul = require('../middlewares/ezegymasikmodul');
 
 var modelUser = require('../schemas/user');
+var checkLogin = require('../middleware/login');
 
 
 var objectRepository = {
@@ -12,27 +13,34 @@ var objectRepository = {
 };
 
 router.get('/',
-	function (req, res) {
-
-		modelUser.findOne(
-			{
-				username: 'gyozo',
-				password: '1234'
-			}, 'username skills',
-			function(err, user){
-				if(!user){
-					console.log('Nem jó!');
-				} else {
-					console.log(user.skills);
-					console.log(user.username);
-				}
+function (req, res) {
+	
+	modelUser.findOne(
+		{
+			
+			username: req.username,
+			pass: req.pass
+		},'username',
+		function(err, user){
+			if(!user){
+				console.log('Nem jó!');
+				
+				res.json(
+					{"haha": req.username}
+				);
+			} else {
+				//console.log(user.skills);
+				console.log(user.username);
+				res.json(
+					{"Bejelentkezve:": user.username}
+				);
 			}
-		);
+		}
+	);
 
-		res.json(
-			{"haha": "hahaha"}
-		);
-	}
+	
+}
+	
 );
 
 
