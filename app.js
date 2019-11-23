@@ -3,7 +3,7 @@ var bodyParser = require('body-parser');
 
 var app = express();
 
-var weboldalRoutes = require('./routes/siteRoutes');
+var weboldalRoutes = require('./routes/weboldaRoutes');
 
 app.use(bodyParser.json());
 
