@@ -7,4 +7,4 @@ var UserSchema = new Schema({
     
 }, { collection: 'users' });
 
-module.exports = db.model('User', UserSchema);
+module.exports.user = db.model('User', UserSchema);
