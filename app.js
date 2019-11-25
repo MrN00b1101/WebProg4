@@ -8,8 +8,9 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 var weboldalRoutes = require('./routes/weboldaRoutes');
 app.use(express.static('assets'));
-app.use(session({secret:'titkosSzöveg', saveUninitialized: false, resave: false}));
+app.use(session({secret:'titkosSzöveg', saveUninitialized: true, resave: true}));
 
+app.set('view engine', 'ejs');
 
 
 app.use('/', weboldalRoutes);

@@ -1,9 +1,9 @@
 var db = require('../modules/connect');
 var Schema = db.Schema;
-var UserSchema = new Schema({
+var transactionSchema = new Schema({
 	value: { type: Number, require: true },
     username: {type: String, require: true},
     description: {type: String, require: true}
-}, { collection: 'transaction' });
+}, { collection: 'transactions' });
 
-module.exports = db.model('User', UserSchema);
+module.exports.transaction = db.model('transaction', transactionSchema);

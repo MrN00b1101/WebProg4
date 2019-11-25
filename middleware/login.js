@@ -1,23 +1,11 @@
-var modelUser = require('../schemas/user');
-function chkLogin (username, pass) {
-
+var modelUser = require('../schemas/user').user;
+async function chkLogin (name, passW,user) {
     modelUser.findOne(
         {
-            username: username,
-            password: pass
-        },
-        function(err, user){
-            if(!user){
-                console.log('Nem jó!');
-                return null;
-            } else {
-             //   console.log(user.skills);
-                //console.log(user.username);
-                return user.username;
-            }
+            username: name,
+            pass: passW
         }
-    );
-    
-    
+    )
+    console.log(user);
 }
-module.exports.chekcLogin = chkLogin;
+module.exports.checkLogin = chkLogin;

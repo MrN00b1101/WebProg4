@@ -1,11 +1,13 @@
 var express = require('express');
 var router = express.Router();
 var register = require('../middleware/register');
-var checkLogin = require('../middleware/login');
+var checkLogin = require('../middleware/login').checkLogin;
 var loggedInUsername = null;
+var modelUser = require('../schemas/user').user;
+var modelTransaction = require('../schemas/transactions').transaction;
 router.get('/',
 	function (req, res) {	
-		res.render('index', {title: "Malacpersely", loggedIn: loggedInUsername});
+		res.sendfile('./public/index.html',{title: "Malacpersely", loggedIn: loggedInUsername});
 	}
 );
 
@@ -15,22 +17,80 @@ router.get('/register', function(req, res) {
 );
 router.get('/login',
 	function (req, res) {
-		res.render('login');	
+		if(req.session.user){
+			res.status('200').send("Bejelentkezve: "+req.session.user.username);
+		}else{
+			res.render('login');	
+		}
 	}
 );
-router.post('/login',
-	function (req, res) {
-		loggedInUsername = checkLogin(req.body.username, req.body.password);
+router.post('/login', async function (req, res) {
+	
+		modelUser.findOne(
+			{
+				username: req.body.username,
+				pass: req.body.pass
+			}, function (err, user){
+				req.session.user = user;
+				if(req.session.user){
+					res.status('200').send("Bejelentkezve: " + req.session.user.username);
+				}else{
+					res.status('404').send("Hibás felhasználó név vagy jelszó!");
+				}
+			});
+		
 	}
 );
 router.get('/transactions',
 	function (req, res) {
-		res.render('tranList');	
+		if(!req.session.user){
+			res.status(300).send("Jelenkezz be!");
+		}else{
+		
+			modelTransaction.find({username:req.session.user.username},
+				function(err,transactions){
+					if(err){
+						res.status(500).send("Valami hiba van")
+					}else{
+						res.status(200).send(transactions);
+					}
+				}
+				);
+		}
 	}
 );
-
+router.post('/transactions',
+	function (req, res) {
+		if(!req.session.user){
+			res.status(300).send("Jelenkezz be!");
+		}else{
+			var transaction = { value: req.body.value,username: req.body.name, description: req.body.desc };
+			console.log(req.body.name);
+			var data = new modelTransaction(transaction);
+			data.save();
+			res.send("Hozzá adva: "+transaction.description);
+		}
+	}
+);
+router.get('/tr',
+	function (req, res) {
+		if(!req.session.user){
+			res.status(300).send("Jelentkezz be "+req.sessionID);
+		}else{
+			res.render('tranAdd');	
+		}
+	}
+);
 router.post("/register", function (req, res) {	
 	register.register(req.body.name, req.body.pass);
 	res.redirect('/');
 });
+router.get('/logout',
+	function (req, res) {
+	if(req.session.user){
+		req.session.user = null;
+	}
+	res.redirect('/');	
+	}
+);
 module.exports = router;
