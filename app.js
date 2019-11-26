@@ -10,8 +10,6 @@ var weboldalRoutes = require('./routes/weboldaRoutes');
 app.use(express.static('assets'));
 app.use(session({secret:'titkosSzöveg', saveUninitialized: true, resave: true}));
 
-app.set('view engine', 'ejs');
-
 
 app.use('/', weboldalRoutes);
 app.listen(8080);

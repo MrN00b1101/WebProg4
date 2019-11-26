@@ -11,16 +11,13 @@ router.get('/',
 	}
 );
 
-router.get('/register', function(req, res) {
-	res.render('register');
-}
-);
+
 router.get('/login',
 	function (req, res) {
 		if(req.session.user){
-			res.status('200').send("Bejelentkezve: "+req.session.user.username);
+			res.status(200).send("Bejelentkezve: "+req.session.user.username);
 		}else{
-			res.render('login');	
+			res.status(201).send("Jelentkezz be!");;	
 		}
 	}
 );
@@ -33,9 +30,9 @@ router.post('/login', async function (req, res) {
 			}, function (err, user){
 				req.session.user = user;
 				if(req.session.user){
-					res.status('200').send("Bejelentkezve: " + req.session.user.username);
+					res.status(200).send("Bejelentkezve: " + req.session.user.username);
 				}else{
-					res.status('404').send("Hibás felhasználó név vagy jelszó!");
+					res.status(404).send("Hibás felhasználó név vagy jelszó!");
 				}
 			});
 		
@@ -44,7 +41,7 @@ router.post('/login', async function (req, res) {
 router.get('/transactions',
 	function (req, res) {
 		if(!req.session.user){
-			res.status(300).send("Jelenkezz be!");
+			res.status(201).send("Jelenkezz be!");
 		}else{
 		
 			modelTransaction.find({username:req.session.user.username},
@@ -62,7 +59,7 @@ router.get('/transactions',
 router.post('/transactions',
 	function (req, res) {
 		if(!req.session.user){
-			res.status(300).send("Jelenkezz be!");
+			res.status(201).send("Jelenkezz be!");
 		}else{
 			var transaction = { value: req.body.value,username: req.body.name, description: req.body.desc };
 			console.log(req.body.name);
@@ -72,25 +69,17 @@ router.post('/transactions',
 		}
 	}
 );
-router.get('/tr',
-	function (req, res) {
-		if(!req.session.user){
-			res.status(300).send("Jelentkezz be "+req.sessionID);
-		}else{
-			res.render('tranAdd');	
-		}
-	}
-);
+
 router.post("/register", function (req, res) {	
 	register.register(req.body.name, req.body.pass);
 	res.redirect('/');
 });
 router.get('/logout',
 	function (req, res) {
-	if(req.session.user){
-		req.session.user = null;
-	}
-	res.redirect('/');	
+		if(req.session.user){
+			req.session.user = null;
+		}
+		res.status(200).send("Kijelentkezve");
 	}
 );
 module.exports = router;
