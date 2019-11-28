@@ -62,14 +62,14 @@ router.get('/transactions',
 );
 router.post('/transactions',
 	function (req, res) {
-		if(!req.session.user){
+		if(!req.session){
 			res.status(201).send();
 		}else{
-			var transaction = { value: req.body.value,username: req.body.name, description: req.body.desc };
-			console.log(req.body.name);
+			var transaction = { value: req.body.value,username: req.body.username, description: req.body.description };
+			console.log(req.body.username);
 			var data = new modelTransaction(transaction);
 			data.save();
-			res.send();
+			res.status(200).send();
 		}
 	}
 );
