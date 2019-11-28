@@ -7,7 +7,7 @@ var modelUser = require('../schemas/user').user;
 var modelTransaction = require('../schemas/transactions').transaction;
 router.get('/',
 	function (req, res) {	
-		res.sendfile('./public/index.html',{title: "Malacpersely", loggedIn: loggedInUsername});
+		
 	}
 );
 
@@ -15,9 +15,11 @@ router.get('/',
 router.get('/login',
 	function (req, res) {
 		if(req.session.user){
-			res.status(200).send("Bejelentkezve: "+req.session.user.username);
+			res.status(200).send()
 		}else{
-			res.status(201).send("Jelentkezz be!");;	
+			
+			res.status(201).send();	
+
 		}
 	}
 );
@@ -30,9 +32,11 @@ router.post('/login', async function (req, res) {
 			}, function (err, user){
 				req.session.user = user;
 				if(req.session.user){
-					res.status(200).send("Bejelentkezve: " + req.session.user.username);
+					res.header('Access-Control-Allow-Origin', "*");
+					res.status(200).json({username: req.body.username, pass:req.body.pass});
 				}else{
-					res.status(404).send("Hibás felhasználó név vagy jelszó!");
+					
+					res.status(404).send();
 				}
 			});
 		
@@ -47,7 +51,7 @@ router.get('/transactions',
 			modelTransaction.find({username:req.session.user.username},
 				function(err,transactions){
 					if(err){
-						res.status(500).send("Valami hiba van")
+						res.status(500).send()
 					}else{
 						res.status(200).send(transactions);
 					}
@@ -59,19 +63,21 @@ router.get('/transactions',
 router.post('/transactions',
 	function (req, res) {
 		if(!req.session.user){
-			res.status(201).send("Jelenkezz be!");
+			res.status(201).send();
 		}else{
 			var transaction = { value: req.body.value,username: req.body.name, description: req.body.desc };
 			console.log(req.body.name);
 			var data = new modelTransaction(transaction);
 			data.save();
-			res.send("Hozzá adva: "+transaction.description);
+			res.send();
 		}
 	}
 );
 
 router.post("/register", function (req, res) {	
-	register.register(req.body.name, req.body.pass);
+	console.log(req.body.username);
+
+	register.register(req.body.username, req.body.pass);
 	res.redirect('/');
 });
 router.get('/logout',
@@ -79,7 +85,7 @@ router.get('/logout',
 		if(req.session.user){
 			req.session.user = null;
 		}
-		res.status(200).send("Kijelentkezve");
+		res.status(200).send();
 	}
 );
 module.exports = router;
