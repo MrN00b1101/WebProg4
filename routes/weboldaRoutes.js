@@ -42,18 +42,19 @@ router.post('/login', async function (req, res) {
 		
 	}
 );
-router.get('/transactions',
+router.post('/tranList',
 	function (req, res) {
-		if(!req.session.user){
+		if(!req.session){
 			res.status(201).send("Jelenkezz be!");
 		}else{
 		
-			modelTransaction.find({username:req.session.user.username},
+			modelTransaction.find({username:req.body.username},
 				function(err,transactions){
 					if(err){
 						res.status(500).send()
 					}else{
-						res.status(200).send(transactions);
+						
+						res.status(200).json(transactions);
 					}
 				}
 				);
