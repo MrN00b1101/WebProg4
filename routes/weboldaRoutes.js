@@ -48,13 +48,13 @@ router.post('/tranList',
 			res.status(201).send("Jelenkezz be!");
 		}else{
 		
-			modelTransaction.find({username:req.body.username},
+			modelTransaction.find({username:req.body.username},{_id :0, __v: 0},
 				function(err,transactions){
 					if(err){
 						res.status(500).send()
 					}else{
 						
-						res.status(200).json(transactions);
+						res.status(200).jsonp(transactions);
 					}
 				}
 				);
@@ -67,7 +67,7 @@ router.post('/transactions',
 			res.status(201).send();
 		}else{
 			var transaction = { value: req.body.value,username: req.body.username, description: req.body.description };
-			console.log(req.body.username);
+			
 			var data = new modelTransaction(transaction);
 			data.save();
 			res.status(200).send();
